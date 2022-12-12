@@ -122,7 +122,7 @@ void DoubleArray::Clear()
 	}
 }
 
-DoubleArray DoubleArray::Insert(int position, int element)
+DoubleArray DoubleArray::Insert(int position, double element)
 {
 	if (position >= m_size || position < 0)
 	{
@@ -172,4 +172,62 @@ double& DoubleArray::Front()
 double& DoubleArray::Back()
 {
 	return array[m_size-1];
+}
+
+void DoubleArray::Push_Back(double element)
+{
+	m_size++;
+	double* copy = new double[m_size];
+	for (int i = 0; i < m_size - 1; i++)
+		copy[i] = array[i];
+	delete[]array;
+	array = new double[m_size];
+	for (int i = 0; i < m_size - 1; i++)
+		array[i] = copy[i];
+	array[m_size - 1] = element;
+	delete[]copy;
+}
+
+void DoubleArray::Resize(int size)
+{
+	if (size == m_size)
+		return;
+	if (size < 0)
+	{
+		cout << "Error. The entered size is less than 0. The array will be deleted." << endl;
+		if(array != nullptr)
+			delete[]array;
+		m_size = 0;
+		array = nullptr;
+		return;
+	}
+
+	double* copy = new double[m_size];
+
+	if (size > m_size)
+	{
+		for (int i = 0; i < m_size; i++)
+			copy[i] = array[i];
+		delete[]array;
+		array = new double[size];
+		for (int i = 0; i < size; i++)
+		{
+			if (i >= m_size)
+				array[i] = 0;
+			else
+				array[i] = copy[i];
+		}
+		m_size = size;
+	}
+	else
+	{
+		for (int i = 0; i < size; i++)
+			copy[i] = array[i];
+		delete[]array;
+		m_size = size;
+		array = new double[size];
+		for (int i = 0; i < size; i++)
+			array[i] = copy[i];
+	}
+	delete[]copy;
 }
