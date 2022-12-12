@@ -14,6 +14,8 @@ int main()
 
 	DoubleArray test_2(5, array);
 
+	test_1 = test_2;
+
 	if (!test_2.Empty())
 	{
 		test_2 = test_2 + 4;
@@ -44,7 +46,36 @@ int main()
 
 		cout << test_2.Back() << endl;
 
-		delete[]array;
+		test_2.Push_Back(7.4);
+
+		for (int i = 0; i < test_2.Size(); i++)
+			cout << test_2[i] << " ";
+
+		cout << endl;
+
+		test_2.Resize(9);
+
+		for (int i = 0; i < test_2.Size(); i++)
+			cout << test_2[i] << " ";
+
+		cout << endl;
+
+		test_2.Resize(4);
+
+		for (int i = 0; i < test_2.Size(); i++)
+			cout << test_2[i] << " ";
+
+		cout << endl;
+
+		test_2 = test_1;
+
+		for (int i = 0; i < test_2.Size(); i++)
+			cout << test_2[i] << " ";
+
+		cout << endl;
+
+		if(array != nullptr)
+			delete[]array;
 	}
 
 	return 0;
