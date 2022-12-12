@@ -231,3 +231,36 @@ void DoubleArray::Resize(int size)
 	}
 	delete[]copy;
 }
+
+void DoubleArray::Erase(int start, int end)
+{
+	try
+	{
+		if (end < start)
+			throw 1;
+		if (start < 0)
+			throw 1;
+		if (end >= m_size)
+			throw 1;
+		int size = m_size - ((end - start) + 1);
+		if (size == 0)
+		{
+			m_size = 0;
+			delete[]array;
+		}
+		double* copy = new double[size];
+		for (int i = 0; i < m_size; i++)
+		{
+			if (i >= start && i <= end)
+				continue;
+			copy[i] = array[i];
+		}
+		delete[]array;
+		array = new double[size];
+	}
+	catch(int)
+	{
+		cout << "Error. The parameters are set incorrectly." << endl;
+		return;
+	}
+}
