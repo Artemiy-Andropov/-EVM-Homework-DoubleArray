@@ -113,6 +113,93 @@ double& DoubleArray::operator[](int index)
 	}
 }
 
+ostream& operator<<(ostream& out, const DoubleArray& obj)
+{
+	if (obj.m_size == 0)
+		return out;
+	for (int i = 0; i < obj.m_size; i++)
+		out << obj.array[i] << " ";
+	return out;
+}
+
+istream& operator>>(istream& in, DoubleArray& obj)
+{
+	try
+	{
+		while (in.peek() == ' ')
+			in.ignore();
+
+		if (in.peek() != '[')
+			throw 1;
+		else
+			in.ignore();
+
+		if (in.peek() == ']')
+		{
+			in.ignore();
+			if (!obj.Empty())
+				delete[]obj.array;
+			obj.m_size = 0;
+			obj.array = nullptr;
+			return in;
+		}
+
+		int size = 100;
+		double* array_ = new double[size];
+		int count = 0;
+
+		while (true)
+		{
+			double data;
+			in >> data;
+			if (in.fail())
+			{
+				delete[]array_;
+				throw 1;
+			}
+			array_[count] = data;
+			count++;
+			if (count == size) //На случай, если пользователь ввел больше 100 элементов
+			{
+				size *= 3;
+				double* copy = new double[count];
+				for (int i = 0; i < count; i++)
+					copy[i] = array_[i];
+				delete[]array_;
+				array_ = new double[size];
+				for (int i = 0; i < count; i++)
+					array_[i] = copy[i];
+				delete[]copy;
+			}
+
+			if (in.peek() == ']')
+			{
+				in.ignore();
+				obj.m_size = count;
+				if (!obj.Empty())
+					delete[]obj.array;
+				obj.array = new double[count];
+				for (int i = 0; i < count; i++)
+					obj.array[i] = array_[i];
+				delete[]array_;
+				return in;
+			}
+			if (in.peek() != ',')
+			{
+				delete[]array_;
+				throw 1;
+			}
+			else
+				in.ignore();
+		}
+	}
+	catch (int)
+	{
+		in.setstate(ios::failbit);
+		return in;
+	}
+}
+
 void DoubleArray::Clear()
 {
 	if (array != nullptr)
@@ -247,18 +334,26 @@ void DoubleArray::Erase(int start, int end)
 		{
 			m_size = 0;
 			delete[]array;
+			array = nullptr;
+			return;
 		}
 		double* copy = new double[size];
+		int count = 0;
 		for (int i = 0; i < m_size; i++)
 		{
 			if (i >= start && i <= end)
 				continue;
-			copy[i] = array[i];
+			copy[count] = array[i];
+			count++;
 		}
 		delete[]array;
 		array = new double[size];
+		m_size = size;
+		for (int i = 0; i < size; i++)
+			array[i] = copy[i];
+		delete[]copy;
 	}
-	catch(int)
+	catch (int)
 	{
 		cout << "Error. The parameters are set incorrectly." << endl;
 		return;
