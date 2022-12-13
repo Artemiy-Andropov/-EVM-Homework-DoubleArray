@@ -6,13 +6,9 @@ int main()
 {
 	DoubleArray test_1;
 
-	double* array;
-	array = new double[5];
+	DoubleArray test_2;
 
-	for (int i = 0; i < 5; ++i)
-		cin >> array[i];
-
-	DoubleArray test_2(5, array);
+	cin >> test_2;
 
 	test_1 = test_2;
 
@@ -48,34 +44,23 @@ int main()
 
 		test_2.Push_Back(7.4);
 
-		for (int i = 0; i < test_2.Size(); i++)
-			cout << test_2[i] << " ";
-
-		cout << endl;
+		cout << test_2 << endl;
 
 		test_2.Resize(9);
 
-		for (int i = 0; i < test_2.Size(); i++)
-			cout << test_2[i] << " ";
-
-		cout << endl;
+		cout << test_2 << endl;
 
 		test_2.Resize(4);
 
-		for (int i = 0; i < test_2.Size(); i++)
-			cout << test_2[i] << " ";
-
-		cout << endl;
+		cout << test_2 << endl;
 
 		test_2 = test_1;
 
-		for (int i = 0; i < test_2.Size(); i++)
-			cout << test_2[i] << " ";
+		cout << test_2 << endl;
 
-		cout << endl;
+		test_2.Erase(0, 4);
 
-		if(array != nullptr)
-			delete[]array;
+		cout << test_2 << endl;
 	}
 
 	return 0;
