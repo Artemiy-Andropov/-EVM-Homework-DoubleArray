@@ -31,27 +31,32 @@ public:
 	*@param Массив, состоящий из действительных чисел
 	*/
 	DoubleArray(int size_, double* array_);
+
 	/*
 	*@brief Деструктор
 	*/
 	~DoubleArray();
+
 	/*
 	*@brief Конструктор копирования
 	*@param Объект класса "DoubleArray"
 	*/
 	DoubleArray(const DoubleArray& obj);
+
 	/*
 	*@brief Перегрузка оператора = для класса "DoubleArray"
 	*@param Объект класса "DoubleArray"
 	*@return Объект класса "DoubleArray"
 	*/
 	DoubleArray& operator=(const DoubleArray& obj);
+
 	/*
 	*@brief Перегрузка оператора + для класса "DoubleArray"
 	*@param Действительное число
 	*@return Объект класса "DoubleArray"
 	*/
 	DoubleArray operator+(const double number);
+
 	/*
 	*@brief Перегрузка оператора * для класса "DoubleArray"
 	*@param Действительное число
@@ -72,26 +77,47 @@ public:
 	*@return Объект класса "DoubleArray"
 	*/
 	DoubleArray operator/(const double number);
+
 	/*
 	*@brief Проверяет, пустой ли массив
 	*@return True или False
 	*/
 	bool Empty();
+
 	/*
 	*@brief Получение размера объекта класса "DoubleArray"
 	*@return Натуральное число
 	*/
 	int Size();
+
 	/*
 	*@brief Перегрузка оператора [] для класса "DoubleArray"
 	*@param Индекс элемента (Позиция)
 	*@return Указатель на элемент в классе "DoubleArray"
 	*/
 	double& operator[](int index);
+
+	/*
+	*@brief Перегрузка оператора << для класса "DoubleArray"
+	*@param Ссылка на поток вывода
+	*@param Объект класса "DoubleArray"
+	*@return Ссылка на поток вывода
+	*/
+	friend ostream& operator<<(ostream& out, const DoubleArray& obj);
+
+	/*
+	*@brief Перегрузка оператора << для класса "DoubleArray"
+	*@param Ссылка на поток ввода
+	*@param Объект класса "DoubleArray"
+	*@return Ссылка на поток ввода
+	*/
+	friend istream& operator>>(istream& in, DoubleArray& obj);
+
 	/*
 	*@brief Отчищение массива в объекте класса "DoubleArray"
 	*/
 	void Clear();
+
 	/*
 	*@brief Вставляет элемент на выбранную позицию
 	*@param Натуральное число (Позиция)
@@ -130,7 +156,7 @@ public:
 	*@param Натуральное число (новый размер)
 	*/
 	void Resize(int size);
-	
+
 	/*
 	*@brief Удаляет элементы в выбранном диапазоне
 	*@param Натуральное число (начало диапазона удаления)
