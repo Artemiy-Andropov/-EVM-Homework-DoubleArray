@@ -1,5 +1,6 @@
 #include <iostream>
 #include "DoubleArray.h"
+#include "Exception.h"
 using namespace std;
 
 void DoubleArray::Delete(DoubleArray& obj)
@@ -100,17 +101,10 @@ int DoubleArray::Size()
 
 double& DoubleArray::operator[](int index)
 {
-	try
-	{
-		if (index >= m_size)
-			throw 1;
-		else
-			return array[index];
-	}
-	catch(int)
-	{
-		cout << "Error. There is no element at this index" << endl;
-	}
+	if (index >= m_size || index < 0)
+		throw ArrayException("Error. Invalid input. This position is not in the array.");
+	else
+		return array[index];
 }
 
 ostream& operator<<(ostream& out, const DoubleArray& obj)
@@ -130,7 +124,7 @@ istream& operator>>(istream& in, DoubleArray& obj)
 			in.ignore();
 
 		if (in.peek() != '[')
-			throw 1;
+			throw ArrayException("Invalid first character. Here it was expected '[' .");
 		else
 			in.ignore();
 
@@ -155,11 +149,11 @@ istream& operator>>(istream& in, DoubleArray& obj)
 			if (in.fail())
 			{
 				delete[]array_;
-				throw 1;
+				throw ArrayException("Invalid character. Here a real number was expected.");
 			}
 			array_[count] = data;
 			count++;
-			if (count == size) //ÐÐ° ÑÐ»ÑƒÑ‡Ð°Ð¹, ÐµÑÐ»Ð¸ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ Ð²Ð²ÐµÐ» Ð±Ð¾Ð»ÑŒÑˆÐµ 100 ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²
+			if (count == size) //Íà ñëó÷àé, åñëè ïîëüçîâàòåëü ââåë áîëüøå 100 ýëåìåíòîâ
 			{
 				size *= 3;
 				double* copy = new double[count];
@@ -187,14 +181,15 @@ istream& operator>>(istream& in, DoubleArray& obj)
 			if (in.peek() != ',')
 			{
 				delete[]array_;
-				throw 1;
+				throw ArrayException("Invalid character.Here it was expected ',' ");
 			}
 			else
 				in.ignore();
 		}
 	}
-	catch (int)
+	catch (ArrayException& exception_)
 	{
+		std::cerr << "An exception occurred at array ( " << exception_.GetError() << " )" << std::endl;
 		in.setstate(ios::failbit);
 		return in;
 	}
@@ -212,11 +207,7 @@ void DoubleArray::Clear()
 DoubleArray DoubleArray::Insert(int position, double element)
 {
 	if (position >= m_size || position < 0)
-	{
-		cout << "Error. There is no element at this index" << endl;
-
-		return *this;
-	}
+		throw ArrayException("Error. Invalid input. This position is not in the array.");
 	else
 	{
 		double* copy = new double[m_size];
@@ -238,17 +229,10 @@ DoubleArray DoubleArray::Insert(int position, double element)
 
 double& DoubleArray::At(int index)
 {
-	try
-	{
-		if (index >= m_size)
-			throw 1;
-		else
-			return array[index];
-	}
-	catch (int)
-	{
-		cout << "Error. There is no element at this index" << endl;
-	}
+	if (index >= m_size || index < 0)
+		throw ArrayException("Error. Invalid input. This position is not in the array.");
+	else
+		return array[index];
 }
 
 double& DoubleArray::Front()
@@ -281,7 +265,6 @@ void DoubleArray::Resize(int size)
 		return;
 	if (size < 0)
 	{
-		cout << "Error. The entered size is less than 0. The array will be deleted." << endl;
 		if(array != nullptr)
 			delete[]array;
 		m_size = 0;
@@ -321,41 +304,33 @@ void DoubleArray::Resize(int size)
 
 void DoubleArray::Erase(int start, int end)
 {
-	try
+	if (end < start)
+		throw ArrayException("Error. The parameters are set incorrectly.");
+	if (start < 0)
+		start = 0;
+	if (end >= m_size)
+		end = m_size;
+	int size = m_size - ((end - start) + 1);
+	if (size == 0)
 	{
-		if (end < start)
-			throw 1;
-		if (start < 0)
-			throw 1;
-		if (end >= m_size)
-			throw 1;
-		int size = m_size - ((end - start) + 1);
-		if (size == 0)
-		{
-			m_size = 0;
-			delete[]array;
-			array = nullptr;
-			return;
-		}
-		double* copy = new double[size];
-		int count = 0;
-		for (int i = 0; i < m_size; i++)
-		{
-			if (i >= start && i <= end)
-				continue;
-			copy[count] = array[i];
-			count++;
-		}
+		m_size = 0;
 		delete[]array;
-		array = new double[size];
-		m_size = size;
-		for (int i = 0; i < size; i++)
-			array[i] = copy[i];
-		delete[]copy;
-	}
-	catch (int)
-	{
-		cout << "Error. The parameters are set incorrectly." << endl;
+		array = nullptr;
 		return;
 	}
+	double* copy = new double[size];
+	int count = 0;
+	for (int i = 0; i < m_size; i++)
+	{
+		if (i >= start && i <= end)
+			continue;
+		copy[count] = array[i];
+		count++;
+	}
+	delete[]array;
+	array = new double[size];
+	m_size = size;
+	for (int i = 0; i < size; i++)
+		array[i] = copy[i];
+	delete[]copy;
 }
