@@ -102,7 +102,7 @@ int DoubleArray::Size()
 double& DoubleArray::operator[](int index)
 {
 	if (index >= m_size || index < 0)
-		throw ArrayException("Error. Invalid input. This position is not in the array.");
+		throw ArrayException("Error in []. Invalid input. This position is not in the array.", 1);
 	else
 		return array[index];
 }
@@ -118,81 +118,73 @@ ostream& operator<<(ostream& out, const DoubleArray& obj)
 
 istream& operator>>(istream& in, DoubleArray& obj)
 {
-	try
-	{
-		while (in.peek() == ' ')
-			in.ignore();
+	while (in.peek() == ' ')
+		in.ignore();
 
-		if (in.peek() != '[')
-			throw ArrayException("Invalid first character. Here it was expected '[' .");
-		else
-			in.ignore();
+	if (in.peek() != '[')
+		throw ArrayException("Error in >>. Invalid first character. Here it was expected '[' .", 3);
+	else
+		in.ignore();
+
+	if (in.peek() == ']')
+	{
+		in.ignore();
+		if (!obj.Empty())
+			delete[]obj.array;
+		obj.m_size = 0;
+		obj.array = nullptr;
+		return in;
+	}
+
+	int size = 100;
+	double* array_ = new double[size];
+	int count = 0;
+
+	while (true)
+	{
+		double data;
+		in >> data;
+		if (in.fail())
+		{
+			delete[]array_;
+			throw ArrayException("Error in >>. Invalid character. Here a real number was expected.", 4);
+		}
+		array_[count] = data;
+		count++;
+		if (count == size) //На случай, если пользователь ввел больше 100 элементов
+		{
+			size *= 3;
+			double* copy = new double[count];
+			for (int i = 0; i < count; i++)
+				copy[i] = array_[i];
+			delete[]array_;
+			array_ = new double[size];
+			for (int i = 0; i < count; i++)
+				array_[i] = copy[i];
+			delete[]copy;
+		}
 
 		if (in.peek() == ']')
 		{
 			in.ignore();
+			obj.m_size = count;
 			if (!obj.Empty())
 				delete[]obj.array;
-			obj.m_size = 0;
-			obj.array = nullptr;
+			obj.array = new double[count];
+			for (int i = 0; i < count; i++)
+				obj.array[i] = array_[i];
+			delete[]array_;
 			return in;
 		}
-
-		int size = 100;
-		double* array_ = new double[size];
-		int count = 0;
-
-		while (true)
+		if (in.peek() != ',')
 		{
-			double data;
-			in >> data;
-			if (in.fail())
-			{
-				delete[]array_;
-				throw ArrayException("Invalid character. Here a real number was expected.");
-			}
-			array_[count] = data;
-			count++;
-			if (count == size) //На случай, если пользователь ввел больше 100 элементов
-			{
-				size *= 3;
-				double* copy = new double[count];
-				for (int i = 0; i < count; i++)
-					copy[i] = array_[i];
-				delete[]array_;
-				array_ = new double[size];
-				for (int i = 0; i < count; i++)
-					array_[i] = copy[i];
-				delete[]copy;
-			}
-
-			if (in.peek() == ']')
-			{
-				in.ignore();
-				obj.m_size = count;
-				if (!obj.Empty())
-					delete[]obj.array;
-				obj.array = new double[count];
-				for (int i = 0; i < count; i++)
-					obj.array[i] = array_[i];
-				delete[]array_;
-				return in;
-			}
-			if (in.peek() != ',')
-			{
-				delete[]array_;
-				throw ArrayException("Invalid character.Here it was expected ',' ");
-			}
-			else
-				in.ignore();
+			delete[]array_;
+			throw ArrayException("Error in >>. Invalid character.Here it was expected ',' ", 5);
 		}
+		else
+			in.ignore();
 	}
-	catch (ArrayException& exception_)
-	{
-		std::cerr << "An exception occurred at array ( " << exception_.GetError() << " )" << std::endl;
-		in.setstate(ios::failbit);
-		return in;
-	}
+	
 }
 
 void DoubleArray::Clear()
@@ -207,7 +199,7 @@ void DoubleArray::Clear()
 DoubleArray DoubleArray::Insert(int position, double element)
 {
 	if (position >= m_size || position < 0)
-		throw ArrayException("Error. Invalid input. This position is not in the array.");
+		throw ArrayException("Error in function Insert. Invalid input. This position is not in the array.", 1);
 	else
 	{
 		double* copy = new double[m_size];
@@ -230,7 +222,7 @@ DoubleArray DoubleArray::Insert(int position, double element)
 double& DoubleArray::At(int index)
 {
 	if (index >= m_size || index < 0)
-		throw ArrayException("Error. Invalid input. This position is not in the array.");
+		throw ArrayException("Error in function At. Invalid input. This position is not in the array.", 1);
 	else
 		return array[index];
 }
@@ -305,7 +297,7 @@ void DoubleArray::Resize(int size)
 void DoubleArray::Erase(int start, int end)
 {
 	if (end < start)
-		throw ArrayException("Error. The parameters are set incorrectly.");
+		throw ArrayException("Error in function Erase. The parameters are set incorrectly.", 2);
 	if (start < 0)
 		start = 0;
 	if (end >= m_size)

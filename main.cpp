@@ -68,7 +68,7 @@ int main()
 	}
 	catch (ArrayException& exception_)
 	{
-		std::cerr << "An exception occurred at array (" << exception_.GetError() << ")" << std::endl;
+		std::cerr << "An exception occurred at array (" << exception_.GetError() << ") " << "Error code: " << exception_.GetCodeError() << std::endl;
 	}
 	return 0;
 }
