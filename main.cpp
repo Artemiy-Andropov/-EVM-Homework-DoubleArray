@@ -7,6 +7,7 @@ int main()
 {
 	try
 	{
+		//
 		DoubleArray test_1;
 
 		DoubleArray test_2;
